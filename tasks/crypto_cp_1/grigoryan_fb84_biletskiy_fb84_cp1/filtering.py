@@ -1,5 +1,7 @@
 import re
 
+#github_test
+
 def symbols_filter(f,rf,buffer):
     a = input("Filter extra symbols?")
     if a == str(1):
