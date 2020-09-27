@@ -18,3 +18,9 @@ for i in result_file:
             sumletters += 1
 
 print("SUM: " + str(sumletters))
+
+
+for i in result_file:
+    for j in i:
+        if j in alphabet:
+            sumletters += 1

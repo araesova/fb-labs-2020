@@ -8,7 +8,6 @@ def symbols_filter(f,rf,buffer):
         for line in f:
             newline = re.sub(r'[^а-яА-Я]+', ' ', line)
             buffer += newline
-        #res = ''.join([i for i in buffer if not i.isdigit()])
     a = input("Lower case?")
     if a == str(1):
         rf.write(buffer.lower())
