@@ -26,6 +26,7 @@ if a == "1" and b == "1":
         print(i, round(n,7))
         formula += (-n * math.log2(n))/2
     print(round(formula, 4))
+    print("Izbytochnost':" + str(round((1 - (formula) / math.log(32, 2)), 5)))
 
 if a == "1" and b == "2":
     print("W/ Spaces, Step two")
@@ -37,6 +38,7 @@ if a == "1" and b == "2":
         n = result_file.read().count(i) / sumletters
         formula += (-n * math.log2(n))/2
     print(round(formula, 4))
+    print("Izbytochnost':" + str(round((1 - (formula) / math.log(32, 2)), 5)))
 
 
 if a == "2" and b == "1":
@@ -50,6 +52,7 @@ if a == "2" and b == "1":
         print(i, round(n, 6))
         formula += (-n * math.log2(n))/2
     print(round(formula, 4))
+    print("Izbytochnost':" + str(round((1 - (formula) / math.log(31, 2)), 5)))
 
 if a == "2" and b == "2":
     print("W/out Spaces, Step two")
@@ -62,3 +65,5 @@ if a == "2" and b == "2":
         print(i, round(n, 6))
         formula += (-n * math.log2(n))/2
     print(round(formula, 4))
+    print("Izbytochnost':" + str(round((1 - (formula) / math.log(31, 2)), 5)))
+

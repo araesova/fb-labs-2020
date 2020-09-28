@@ -25,4 +25,7 @@ for i in alphabet:
     n = result_file.read().count(i) / sumletters
     if n > 0 and n<1:
         formula += ((-n) * math.log2(n))
-print(round(formula, 4))
+print("Entropy:",round(formula, 4))
+
+print("Izbytochnost':" + str(round((1 - (formula)/math.log(31,2)),5)))
+
