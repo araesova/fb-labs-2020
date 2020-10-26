@@ -63,8 +63,8 @@ def blocks(text, num_block):
     while i < num_block:
         newarr.append("")
         i += 1
-    for id in range(0, len(text)):
-        newarr[id%num_block] += text[id]
+    for l in range(0, len(text)):
+        newarr[l%num_block] += text[l]
     while j < num_block:
         indexforblocks = index_vidpovidnosti(newarr[j], newarr[j])
         j += 1
@@ -84,5 +84,5 @@ def monogram_of_blocks(arr,n):
 
 
 print()
-index2=blocks(letters1,14)
-monogram_of_blocks(index2,1)
+index2=blocks(letters1,14) #Блоки
+monogram_of_blocks(index2,1) #Монограмы для блоков
