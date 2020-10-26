@@ -1,7 +1,7 @@
 import re
 import math
 import collections
-
+dict = {}
 alphabet = (
     'а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц',
     'ч',
@@ -74,6 +74,15 @@ def blocks(text, num_block):
     print("Середнє", suma)
     return newarr
 
+def monogram_of_blocks(arr,n):
+    n = n-1
+    c = 0
+    for k in alphabet:
+        dict[k] = arr[n].count(str(k))/sumabukv(arr[n])
+    alphlist = sorted(dict.items(), reverse=True, key=lambda x: x[1])
+    print("Буква часто встречающая в блоке: "+ str(alphlist[0]))
+
 
 print()
-index2=blocks(letters1,3)
+index2=blocks(letters1,14)
+monogram_of_blocks(index2,1)
