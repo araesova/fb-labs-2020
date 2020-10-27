@@ -1,11 +1,12 @@
 import re
 import math
 import collections
+from itertools import cycle
 dict = {}
 alphabet = (
     'а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц',
     'ч',
-    'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я', ' ')
+    'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я')
 #sumletters = 0
 
 letter_ord = 0
@@ -21,15 +22,18 @@ message = open("filteredtext.txt", 'r', encoding="utf-8")
 letters = re.findall(r'(?=([а-я," "]{1}))', message.read())  # ділим посимвольно ВТ.
 
 # key = ("да", "нет", "липа", "зачем", "необразованый")
-def encryption(key):
+def encryption(key,text):
     #key = ("григорянанаперездачу")
     encr_mess = ""
-    key *= sumabukv(letters) // len(key)  # розтягуєм ключ на всю довжину Відкритого тексту
-    for i, j in zip(letters, key):
+    key *= sumabukv(text) // len(key)  # розтягуєм ключ на всю довжину Відкритого тексту
+    for i, j in zip(text, key):
         # print(ord(i), "+", ord(j), "=", ord(i) + ord(j), "==", ((ord(i) + ord(j)) % 32 + 1072))  # по пріколу для перевірки.
         letter_ord = ord(i) + ord(j)
         encr_mess += chr(letter_ord % 32 + 1072)  # зашифрований текст
     print(encr_mess)
+def decryption(key, text):
+    a = lambda arg: alphabet[alphabet.index(arg[0]) - alphabet.index(arg[1]) % 32]
+    return ''.join(map(a, zip(text, cycle(key))))
 
 from collections import Counter
 
@@ -71,12 +75,10 @@ def blocks(text, num_block):
 
         # indexforblocks+=indexforblocks/num_block
         suma += indexforblocks / num_block
-    print("Середнє", suma)
+    print("Середнє: ", suma)
     return newarr
 
 def monogram_of_blocks(arr,n):
-    n = n-1
-    c = 0
     for k in alphabet:
         dict[k] = arr[n].count(str(k))/sumabukv(arr[n])
     alphlist = sorted(dict.items(), reverse=True, key=lambda x: x[1])
@@ -85,4 +87,19 @@ def monogram_of_blocks(arr,n):
 
 print()
 index2=blocks(letters1,14) #Блоки
-monogram_of_blocks(index2,1) #Монограмы для блоков
+
+for i in range(14):
+    print("BLOCK #" + str(i+1))
+    monogram_of_blocks(index2,i) #Монограмы для блока
+
+def analysis(letter, alphabet, popular):
+    a = (alphabet.index(letter) - alphabet.index(popular)) % len(alphabet)
+    return alpha[a]
+
+for l in "оеа": #предологаемые ввиды ключа
+    print("\n")
+    for i in "фьяруйтцотьхью":
+        print(key_analysis(i,alphabet,l), end='')
+
+print("\n")
+print(decryption(letters1,"последнийдозор")) #расшифровка по ключу
