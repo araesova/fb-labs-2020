@@ -94,7 +94,7 @@ for i in range(14):
 
 def analysis(letter, alphabet, popular):
     a = (alphabet.index(letter) - alphabet.index(popular)) % len(alphabet)
-    return alpha[a]
+    return alphabet[a]
 
 for l in "оеа": #предологаемые ввиды ключа
     print("\n")
