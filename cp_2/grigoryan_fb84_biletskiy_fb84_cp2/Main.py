@@ -86,9 +86,9 @@ def monogram_of_blocks(arr,n):
 
 
 print()
-index2=blocks(letters1,14) #Блоки
+index2=blocks(letters1,7) #Блоки
 
-for i in range(14):
+for i in range(7):
     print("BLOCK #" + str(i+1))
     monogram_of_blocks(index2,i) #Монограмы для блока
 
@@ -102,4 +102,4 @@ for l in "оеа": #предологаемые ввиды ключа
         print(analysis(i,alphabet,l), end='')
 
 print("\n")
-print(decryption(letters1,"последнийдозор")) #расшифровка по ключу
+print(decryption("последнийдозор", letters1)) #расшифровка по ключу
