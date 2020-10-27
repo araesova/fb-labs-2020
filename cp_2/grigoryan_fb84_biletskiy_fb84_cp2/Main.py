@@ -99,7 +99,7 @@ def analysis(letter, alphabet, popular):
 for l in "оеа": #предологаемые ввиды ключа
     print("\n")
     for i in "фьяруйтцотьхью":
-        print(key_analysis(i,alphabet,l), end='')
+        print(analysis(i,alphabet,l), end='')
 
 print("\n")
 print(decryption(letters1,"последнийдозор")) #расшифровка по ключу
