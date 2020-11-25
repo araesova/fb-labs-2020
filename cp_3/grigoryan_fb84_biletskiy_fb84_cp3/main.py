@@ -1,6 +1,6 @@
 import re
 from collections import Counter
-
+import math
 alphabet = (
     'а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц',
     'ч',
@@ -19,9 +19,6 @@ def openfile(file):
     result_file.write(text)
     result_file = open("filtered.txt", 'r', encoding='utf-8')
     return result_file.read()
-
-
-result_file = open("filtered.txt", 'r', encoding='utf-8')
 
 
 def bigrams(filteretext):
@@ -52,7 +49,7 @@ def perebor(massiv, massiv1):
                         continue
                     if k == m:
                         continue
-                    keygenerator(i, j, k, n)
+                    else: keygenerator(i, j, k, n)
 
 
 def keygenerator(x1, x2, y1, y2):
@@ -62,11 +59,29 @@ def keygenerator(x1, x2, y1, y2):
     Y2 = alphabet.index(y2[0]) * m + alphabet.index(y2[1])
     XX = (X1 - X2) % (m ** 2)
     YY = (Y1 - Y2) % (m ** 2)
-    a = (obernene(XX, 31 ** 2) * YY) % (31 ** 2)
-    b = (Y1 - a * X1) % (31 ** 2)
-    tuple_of_keys = (a, b)
-    keylist.append(tuple_of_keys)
-    return keylist
+    a = (obernene(XX, m ** 2) * YY) % (m ** 2)
+    b = (Y1 - a * X1) % (m ** 2)
+    nod = math.gcd(XX, m ** 2)
+    if nod > 1:
+        if YY % nod == 0:
+            a = (obernene(XX, (m ** 2) // nod) * YY) % (m ** 2 // nod)
+            while a < m ** 2:
+                b = (Y1 - a * X1) % (m ** 2)
+                tuplekeys = (a, b)
+                keylist.append(tuplekeys)
+                a += (m ** 2) // nod
+            return keylist
+        if YY % nod != 0:
+                tuplekeys = (a, b)
+                keylist.append(tuplekeys)
+                return keylist
+
+    else:
+        a = (obernene(XX, m ** 2) * YY) % (m ** 2)
+        b = (Y1 - a * X1) % (m ** 2)
+        tuplekeys = (a, b)
+        keylist.append(tuplekeys)
+        return keylist
 
 
 def obernene(a, mod):
