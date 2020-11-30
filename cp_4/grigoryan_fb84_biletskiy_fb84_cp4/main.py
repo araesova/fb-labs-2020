@@ -7,7 +7,7 @@ def NSD(a, b):
     if a == 0:
         return (b, 0, 1)
     else:
-        nsd, x, y = ensd(b % a, a)
+        nsd, x, y = NSD(b % a, a)
         return (nsd, y - (b // a) * x, x)
 
 def obratnoe(b, n):
@@ -82,7 +82,7 @@ def FindOpenKey(p, q):
     while True:
         e = random.randint(2, phi - 1)
         if math.gcd(e, phi) == 1:
-            d = reverse(e, phi)
+            d = obratnoe(e, phi)
             return n, e, d
 
 
@@ -110,6 +110,7 @@ def SendKey(K, n1, d1, n2, e2):
     print("S = {}".format(hex(S)[2:]))
     S1 = Encrypt(S, e2, n2)
     print("S1 = {}".format(hex(S1)[2:]))
+
     return K1, S1
 
 
@@ -117,7 +118,7 @@ def ReceiveKey(eK, S1, n1, e1, n2, d2):
     print("------RECIEVED KEYS---------")
     S = Decrypt(S1, d2, n2)
     K = Decrypt(eK, d2, n2)
-    if Verify(eK, S1, e1, n1):
+    if Verify(K, S, e1, n1):
         print("S = {}".format(hex(S)[2:]))
         print("K = {}".format(hex(K)[2:]))
         return K, S
@@ -134,6 +135,7 @@ while True:
 
         Message = random.randint(0, n1)
         print("K: " + str(hex(Message)[2:]))
+        print(d2)
         EncryptedMessage, EncryptedSignature = SendKey(Message, n1, d1, n2, e2)
         ReceiveKey(EncryptedMessage, EncryptedSignature, n1, e1, n2, d2)
         print("\n" * 3)
