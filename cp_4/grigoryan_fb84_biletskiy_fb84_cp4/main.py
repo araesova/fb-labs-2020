@@ -83,6 +83,9 @@ def FindOpenKey(p, q):
         e = random.randint(2, phi - 1)
         if math.gcd(e, phi) == 1:
             d = obratnoe(e, phi)
+            print("n " + str(n))
+            print("e " + str(e))
+            print("d " + str(d))
             return n, e, d
 
 
