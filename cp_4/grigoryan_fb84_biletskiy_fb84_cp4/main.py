@@ -3,12 +3,14 @@ import math
 import requests
 import json
 
+
 def NSD(a, b):
     if a == 0:
         return (b, 0, 1)
     else:
         nsd, x, y = NSD(b % a, a)
         return (nsd, y - (b // a) * x, x)
+
 
 def obratnoe(b, n):
     nsd, x, y = NSD(b, n)
@@ -17,26 +19,28 @@ def obratnoe(b, n):
 
 
 def primenumber_check(n, k):  # Міллер-Рабін
-    if n == 2:
+    t = 0
+    m = n - 1
+    if n == 2 or n == 3:
         return True
     if n % 2 == 0:
         return False
-    r = 0
-    s = n - 1
-    while s % 2 == 0:
-        r += 1
-        s //= 2
-    if n == 2 or n == 3:
-        return True
-    for _ in range(k):
+    while m % 2 == 0:
+        m = m // 2
+        t += 1
+    for i in range(k):
         a = random.randrange(2, n - 1)
-        x = pow(a, s, n)
-        if x == 1 or x == n - 1:
+        u = pow(a, m, n)
+        if u == 1:
             continue
-        for _ in range(r - 1):
-            x = pow(x, 2, n)
-            if x == n - 1:
+        if u == n - 1:
+            continue
+        j = 1
+        while u != -1 and j < t:
+            u = pow(u, 2, n)
+            if u == n - 1:
                 break
+            j = j + 1
         else:
             return False
     return True
@@ -48,6 +52,7 @@ def GenerateKeyPair(n):
         pair2 = []
         i = 0
         j = 0
+        f = open('log.txt', 'w')
         while i != 2:
             c = random.getrandbits(n)
             if not primenumber_check(c, 10):
@@ -58,6 +63,8 @@ def GenerateKeyPair(n):
                         pair1.append(c)
                         i += 1
                         back = True
+                    else:
+                        f.write(str(hex(c)) + " isn't prime \n")
         while j != 2:
             c = random.getrandbits(n)
             if not primenumber_check(c, 10):
@@ -68,6 +75,8 @@ def GenerateKeyPair(n):
                         pair2.append(c)
                         j += 1
                         back = True
+                    else:
+                        f.write(str(hex(c)) + " isn't prime \n")
 
         a1 = pair1[0] * pair1[1]
         b1 = pair2[0] * pair2[1]
@@ -83,9 +92,9 @@ def FindOpenKey(p, q):
         e = random.randint(2, phi - 1)
         if math.gcd(e, phi) == 1:
             d = obratnoe(e, phi)
-            print("n " + str(n))
-            print("e " + str(e))
-            print("d " + str(d))
+            print("n " + str(hex(n)))
+            print("e " + str(hex(e)))
+            print("d " + str(hex(d)))
             return n, e, d
 
 
@@ -126,13 +135,15 @@ def ReceiveKey(eK, S1, n1, e1, n2, d2):
         print("K = {}".format(hex(K)[2:]))
         return K, S
 
+
 while True:
     a = input("1.Server / 2.Local?")
-    if a == '2':
-        print('\n'*100)
+    if a in '2':
+        print('\n' * 100)
         pair1, pair2 = GenerateKeyPair(256)
         p, q, p1, q1 = pair1[0], pair1[1], pair2[0], pair2[1]
 
+        print("p: " + str(hex(p)), "q: " + str(hex(q)), "p1: " + str(hex(p1)), "q1: " + str(hex(q1)), sep='\n')
         n1, e1, d1 = FindOpenKey(p, q)  # A
         n2, e2, d2 = FindOpenKey(p1, q1)  # B
 
@@ -143,11 +154,12 @@ while True:
         ReceiveKey(EncryptedMessage, EncryptedSignature, n1, e1, n2, d2)
         print("\n" * 3)
 
-    if a == '1':
-        print('\n'*100)
-        print('\n'*100)
+    if a in '1':
+        print('\n' * 100)
+        print('\n' * 100)
         pair1, pair2 = GenerateKeyPair(256)
         p, q = pair1[0], pair1[1]
+
         n1, e1, d1 = FindOpenKey(p, q)  # A
         a = requests.get('http://asymcryptwebservice.appspot.com/rsa/serverKey?keySize=512')
         cookie = a.cookies
@@ -156,20 +168,24 @@ while True:
         a = json.loads(a.text)
         e2 = int(a['publicExponent'], 16)
         n2 = int(a['modulus'], 16)
+        print("e2: " + str(hex(e2)))
+        print("n2: " + str(hex(n2)))
         while n2 < n1:
             pair1, pair2 = GenerateKeyPair(256)
             n1, e1, d1 = FindOpenKey(p, q)  # A
         Message = random.randint(0, n1)
         print("K: " + str(hex(Message)[2:]))
         EncryptedMessage, EncryptedSignature = SendKey(Message, n1, d1, n2, e2)
-        cookie = {cookie_name:cookie_value}
+        cookie = {cookie_name: cookie_value}
 
         print("------RECIEVED KEYS---------")
-        request = "http://asymcryptwebservice.appspot.com/rsa/receiveKey?key={k}&signature={s}&modulus={n}&publicExponent={e}".format(k=hex(EncryptedMessage)[2:],s=hex(EncryptedSignature)[2:],n=hex(n1)[2:],e=hex(e1)[2:])
-        a = json.loads(requests.get(request,cookies=cookie).text)
+        request = "http://asymcryptwebservice.appspot.com/rsa/receiveKey?key={k}&signature={s}&modulus={n}&publicExponent={e}".format(
+            k=hex(EncryptedMessage)[2:], s=hex(EncryptedSignature)[2:], n=hex(n1)[2:], e=hex(e1)[2:])
+        a = json.loads(requests.get(request, cookies=cookie).text)
 
         if a['key'][0] == '0':
             print("K: " + a['key'][1:])
-        else: print("K: " + a['key'])
+        else:
+            print("K: " + a['key'])
         print("Verified: " + str(a['verified']))
-        print("\n"*3)
+        print("\n" * 3)
