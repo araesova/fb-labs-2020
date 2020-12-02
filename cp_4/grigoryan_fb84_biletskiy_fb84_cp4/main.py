@@ -45,44 +45,36 @@ def primenumber_check(n, k):  # Міллер-Рабін
             return False
     return True
 
+def GeneratePrime(n):
+    n = n-1
+    num=2**n
+    i = 1
+    while i != n:
+        rand = random.randint(0,1)
+        num += (2**i)*rand
+        i = i + 1
+    num += 1
+    return num
 
 def GenerateKeyPair(n):
     while True:
-        pair1 = []
-        pair2 = []
+        pair = []
         i = 0
-        j = 0
         f = open('log.txt', 'w')
         while i != 2:
-            c = random.getrandbits(n)
+            c = GeneratePrime(n)
             if not primenumber_check(c, 10):
                 back = False
                 while back is False:
-                    c = random.getrandbits(n)
+                    c = GeneratePrime(n)
                     if primenumber_check(c, 10):
-                        pair1.append(c)
+                        pair.append(c)
                         i += 1
                         back = True
                     else:
                         f.write(str(hex(c)) + " isn't prime \n")
-        while j != 2:
-            c = random.getrandbits(n)
-            if not primenumber_check(c, 10):
-                back = False
-                while back is False:
-                    c = random.getrandbits(n)
-                    if primenumber_check(c, 10):
-                        pair2.append(c)
-                        j += 1
-                        back = True
-                    else:
-                        f.write(str(hex(c)) + " isn't prime \n")
+        return pair
 
-        a1 = pair1[0] * pair1[1]
-        b1 = pair2[0] * pair2[1]
-
-        if a1 <= b1:
-            return pair1, pair2
 
 
 def FindOpenKey(p, q):
@@ -140,9 +132,12 @@ while True:
     a = input("1.Server / 2.Local?")
     if a in '2':
         print('\n' * 100)
-        pair1, pair2 = GenerateKeyPair(256)
-        p, q, p1, q1 = pair1[0], pair1[1], pair2[0], pair2[1]
-
+        while True:
+            pair1 = GenerateKeyPair(512)
+            pair2 = GenerateKeyPair(512)
+            p, q, p1, q1 = pair1[0], pair1[1], pair2[0], pair2[1]
+            if p*q <= p1*q1:
+                break
         print("p: " + str(hex(p)), "q: " + str(hex(q)), "p1: " + str(hex(p1)), "q1: " + str(hex(q1)), sep='\n')
         n1, e1, d1 = FindOpenKey(p, q)  # A
         n2, e2, d2 = FindOpenKey(p1, q1)  # B
@@ -157,9 +152,10 @@ while True:
     if a in '1':
         print('\n' * 100)
         print('\n' * 100)
-        pair1, pair2 = GenerateKeyPair(256)
+        pair1= GenerateKeyPair(256)
+        pair2 = GenerateKeyPair(256)
         p, q = pair1[0], pair1[1]
-
+        p1,q1 = pair2[0],pair2[1]
         n1, e1, d1 = FindOpenKey(p, q)  # A
         a = requests.get('http://asymcryptwebservice.appspot.com/rsa/serverKey?keySize=512')
         cookie = a.cookies
@@ -171,7 +167,9 @@ while True:
         print("e2: " + str(hex(e2)))
         print("n2: " + str(hex(n2)))
         while n2 < n1:
-            pair1, pair2 = GenerateKeyPair(256)
+            print('\n'*100)
+            pair1 = GenerateKeyPair(256)
+            p, q = pair1[0], pair1[1]
             n1, e1, d1 = FindOpenKey(p, q)  # A
         Message = random.randint(0, n1)
         print("K: " + str(hex(Message)[2:]))
